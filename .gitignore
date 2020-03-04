@@ -1,0 +1,13 @@
+# Things not to track
+
+## Local settings
+*.local
+
+## Local install
+miniconda3/
+
+## Temptorary dir (for running installers)
+tmp/
+
+## Sundry lint
+.*.swp
