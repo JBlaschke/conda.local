@@ -33,8 +33,9 @@ if [[ ":\$PATH:" != *$conda_prefix/bin* ]]; then
     # Sometimes so junk can be left over in the PYTHONPATH variable => delete it
     export PYTHONPATH=
 fi
+# used by unenv.sh
+export PATHSTR=$conda_prefix/bin
 EOF
-
 
 #
 # This conda install could be outdated => run update
@@ -60,7 +61,7 @@ pip download mpi4py
 source_name=$(find . -maxdepth 1 -name "mpi4py*" -type f)
 
 # extract source
-tar -xvf $source_name
+tar -xf $source_name
 
 # figure out the name of source dir
 source_dir=$(find . -maxdepth 1 -name "mpi4py*" -type d)
@@ -74,11 +75,12 @@ fi
 
 pushd $source_dir
 # build mpi4py
-python setup.py build --mpicc=$mpicc_str
+echo "Compiling mpi4py with with --mpicc=$mpicc_str"
+python setup.py build --mpicc="$mpicc_str"
 python setup.py install
 popd
 
-onda deactivate
+conda deactivate
 
 # clean up
 rm -r $source_dir
