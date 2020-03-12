@@ -15,7 +15,11 @@ conda_setup_path=$(readlink -f $conda_setup_dir)
 conda_prefix=$conda_setup_path/miniconda3
 
 # run conda installer
-$conda_setup_path/Miniconda3-latest-Linux-x86_64.sh -b -p $conda_prefix
+if [[ $USE_PPC = true ]]; then
+    $conda_setup_path/Miniconda3-latest-Linux-ppc64le.sh -b -p $conda_prefix
+else
+    $conda_setup_path/Miniconda3-latest-Linux-x86_64.sh -b -p $conda_prefix
+fi
 
 
 #
@@ -61,14 +65,20 @@ tar -xvf $source_name
 # figure out the name of source dir
 source_dir=$(find . -maxdepth 1 -name "mpi4py*" -type d)
 
+# configure compiler
+if [[ $USE_CC = true ]]; then
+    mpicc_str="$(which cc) -shared"
+else
+    mpicc_str="$(which mpicc)"
+fi
 
 pushd $source_dir
 # build mpi4py
-python setup.py build --mpicc="$(which cc) -shared"
+python setup.py build --mpicc=$mpicc_str
 python setup.py install
 popd
 
-conda deactivate
+onda deactivate
 
 # clean up
 rm -r $source_dir
@@ -78,4 +88,4 @@ popd
 
 
 echo "Conda is all set up in $conda_prefix"
-echo " <- to use this version of conda, run 'source conda/env.local'"
+echo " <- to use this version of conda, run 'source env.local'"
