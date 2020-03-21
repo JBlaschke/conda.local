@@ -27,7 +27,12 @@ fi
 #
 
 cat > $conda_setup_path/env.local <<EOF
+#
 # Add the local miniconda install to the PATH
+# Automaticall generated using install_conda.sh
+#
+
+
 if [[ ":\$PATH:" != *$conda_prefix/bin* ]]; then
     export PATH=$conda_prefix/bin:\$PATH
     # Sometimes so junk can be left over in the PYTHONPATH variable => delete it
