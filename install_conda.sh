@@ -59,11 +59,16 @@ if [[ ! -d $conda_setup_dir/tmp ]]; then
 fi
 
 pushd $conda_setup_dir/tmp
-# download the mpi4py source 
-pip download mpi4py
+if [[ $USE_STATIC = true ]]; then
+    # figure out the name of the downloaded (static) source
+    source_name=$(find ../../static -maxdepth 1 -name "mpi4py*" -type f)
+else
+    # download the mpi4py source 
+    pip download mpi4py
 
-# figure out the name of the downloaded source
-source_name=$(find . -maxdepth 1 -name "mpi4py*" -type f)
+    # figure out the name of the downloaded source
+    source_name=$(find . -maxdepth 1 -name "mpi4py*" -type f)
+fi
 
 # extract source
 tar -xf $source_name
