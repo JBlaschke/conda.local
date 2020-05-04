@@ -90,8 +90,6 @@ python setup.py build --mpicc="$mpicc_str"
 python setup.py install
 popd
 
-conda deactivate
-
 # clean up
 rm -r $source_dir
 rm -r $source_name
