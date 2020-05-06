@@ -59,6 +59,7 @@ if [[ ! -d $conda_setup_dir/tmp ]]; then
 fi
 
 pushd $conda_setup_dir/tmp
+source $conda_setup_dir/install_mpi4py.sh
 install-mpi4py $STATIC_DIR
 popd
 
