@@ -10,8 +10,7 @@ set -e
 #
 
 # set up install path for the local conda path
-conda_setup_dir=$(dirname ${BASH_SOURCE[0]})
-conda_setup_path=$(readlink -f $conda_setup_dir)
+conda_setup_path=$(readlink -f $(dirname ${BASH_SOURCE[0]}))
 conda_prefix=$conda_setup_path/miniconda3
 
 # run conda installer
