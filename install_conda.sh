@@ -59,40 +59,7 @@ if [[ ! -d $conda_setup_dir/tmp ]]; then
 fi
 
 pushd $conda_setup_dir/tmp
-if [[ $USE_STATIC = true ]]; then
-    # figure out the name of the downloaded (static) source
-    source_name=$(find ../../static -maxdepth 1 -name "mpi4py*" -type f)
-else
-    # download the mpi4py source 
-    pip download mpi4py
-
-    # figure out the name of the downloaded source
-    source_name=$(find . -maxdepth 1 -name "mpi4py*" -type f)
-fi
-
-# extract source
-tar -xf $source_name
-
-# figure out the name of source dir
-source_dir=$(find . -maxdepth 1 -name "mpi4py*" -type d)
-
-# configure compiler
-if [[ $USE_CC = true ]]; then
-    mpicc_str="$(which cc) -shared"
-else
-    mpicc_str="$(which mpicc)"
-fi
-
-pushd $source_dir
-# build mpi4py
-echo "Compiling mpi4py with with --mpicc=$mpicc_str"
-python setup.py build --mpicc="$mpicc_str"
-python setup.py install
-popd
-
-# clean up
-rm -r $source_dir
-rm -r $source_name
+install-mpi4py $STATIC_DIR
 popd
 
 
