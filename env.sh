@@ -6,8 +6,8 @@
 
 
 # prepend local conda install
-if [[ -e $(dirname ${BASH_SOURCE[0]})/env.local ]]; then
-    source $(dirname ${BASH_SOURCE[0]})/env.local
+if [[ -e $(readlink -f $(dirname ${BASH_SOURCE[0]}))/env.local ]]; then
+    source $(readlink -f $(dirname ${BASH_SOURCE[0]}))/env.local
 fi
 
 
@@ -15,6 +15,6 @@ fi
 if [[ ! $(type conda 2> /dev/null) ]]; then
     echo "NOT SO FAST! 'conda' has not been installed (yet)."
     echo "Make the conda tool available to the path, or run:"
-    echo "    ./conda/install_conda.sh"
+    echo "    ./install_conda.sh"
     return
 fi
