@@ -53,16 +53,17 @@ conda update -y --all -n base -c defaults conda
 # Install mpi4py
 #
 
-source $conda_setup_path/install_mpi4py.sh
+if [[ ! $SKIP_MPI4PY = true ]]; then
+    source $conda_setup_path/install_mpi4py.sh
 
-if [[ ! -d $conda_setup_path/tmp ]]; then
-    mkdir $conda_setup_path/tmp
+    if [[ ! -d $conda_setup_path/tmp ]]; then
+        mkdir $conda_setup_path/tmp
+    fi
+
+    pushd $conda_setup_path/tmp
+    install-mpi4py $STATIC_DIR
+    popd
 fi
-
-pushd $conda_setup_path/tmp
-install-mpi4py $STATIC_DIR
-popd
-
 
 
 echo "Conda is all set up in $conda_prefix"
