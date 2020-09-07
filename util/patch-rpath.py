@@ -68,13 +68,11 @@ if __name__ == "__main__":
     target_dir = sys.argv[1]
 
     for root, dirs, files in os.walk(target_dir):
-        for cdir in dirs:
-            cpath = os.path.join(root, cdir)
-            for file_name in glob.glob(os.path.join(cpath, "*.so")):
-                elf = read_elf(file_name)
-                if elf["has_rpath"]:
-                    print(f"Patching {file_name}: RPATH -> RUNPATH")
-                    rpath = get_elf_path(RPATH_TOKEN, elf["lines"])
-                    set_elf_path(rpath, file_name)
-                else:
-                    print(f"Not patching {file_name}: no RPATH")
+        for file_name in glob.glob(os.path.join(root, "*.so")):
+            elf = read_elf(file_name)
+            if elf["has_rpath"]:
+                print(f"Patching {file_name}: RPATH -> RUNPATH")
+                rpath = get_elf_path(RPATH_TOKEN, elf["lines"])
+                set_elf_path(rpath, file_name)
+            else:
+                print(f"Not patching {file_name}: no RPATH")
