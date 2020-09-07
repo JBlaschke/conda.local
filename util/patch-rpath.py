@@ -46,16 +46,17 @@ escaped = lambda a: a.translate(str.maketrans(TRANS_MAP))
 def set_elf_path(rpath, file_name, log="patchelf.log"):
     rpath_escaped = escaped(rpath)
     with open(log, "w") as f:
-        f.write(f" -> Running patch for {rpath}")
+        f.write(f"")
+        f.write(f"* Running patch for {rpath}")
 
     with open(log, "w") as f:
-        f.write(f" -  patchelf --remove-rpath {file_name}")
+        f.write(f" 1. patchelf --remove-rpath {file_name}")
     status = os.system(f"patchelf --remove-rpath {file_name}")
     if status != 0 :
         raise RuntimeError(f"patchelf --remove-rpath {file_name} didn't work")
 
     with open(log, "w") as f:
-        f.write(f" -  patchelf --set-rpath \"{rpath_escaped}\" {file_name}")
+        f.write(f" 2. patchelf --set-rpath \"{rpath_escaped}\" {file_name}")
     status = os.system(f"patchelf --set-rpath \"{rpath_escaped}\" {file_name}")
     if status != 0 :
         raise RuntimeError(f"patchelf --set-rpath \"{rpath_escaped}\" {file_name}")
