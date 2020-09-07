@@ -69,7 +69,8 @@ if __name__ == "__main__":
 
     for root, dirs, files in os.walk(target_dir):
         for cdir in dirs:
-            for file_name in glob.glob(os.path.join(cdir, "*.so")):
+            cpath = os.path.join(root, cdir)
+            for file_name in glob.glob(os.path.join(cpath, "*.so")):
                 elf = read_elf(file_name)
                 if elf["has_rpath"]:
                     print(f"Patching {file_name}: RPATH -> RUNPATH")
