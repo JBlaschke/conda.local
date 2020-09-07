@@ -44,22 +44,35 @@ escaped = lambda a: a.translate(str.maketrans(TRANS_MAP))
 
 
 def set_elf_path(rpath, file_name, log="patchelf.log"):
+
     rpath_escaped = escaped(rpath)
-    with open(log, "w") as f:
-        f.write(f"")
-        f.write(f"* Running patch for {rpath}")
 
-    with open(log, "w") as f:
-        f.write(f" 1. patchelf --remove-rpath {file_name}")
-    status = os.system(f"patchelf --remove-rpath {file_name}")
-    if status != 0 :
-        raise RuntimeError(f"patchelf --remove-rpath {file_name} didn't work")
+    with open(log, "a") as f:
+        f.write(f"=>Patching {file_name}: RPATH -> RUNPATH")
+        f.write(f"* Running patch for {rpath}\n")
 
-    with open(log, "w") as f:
-        f.write(f" 2. patchelf --set-rpath \"{rpath_escaped}\" {file_name}")
-    status = os.system(f"patchelf --set-rpath \"{rpath_escaped}\" {file_name}")
+
+    cmd = f"patchelf --remove-rpath {file_name}"
+
+    with open(log, "a") as f: f.write(f" 1. {cmd}\n")
+
+    status = os.system(cmd)
     if status != 0 :
-        raise RuntimeError(f"patchelf --set-rpath \"{rpath_escaped}\" {file_name}")
+        error_message = f"{cmd} didn't work"
+        with open(log, "a") as f: f.write(f"    ERROR: {error_message}\n\n")
+        raise RuntimeError(error_message)
+
+    cmd = f"patchelf --set-rpath \"{rpath_escaped}\" {file_name}"
+
+    with open(log, "a") as f: f.write(f" 2. {cmd}\n")
+
+    status = os.system(cmd)
+    if status != 0 :
+        error_message = f"{cmd} didn't work" 
+        with open(log, "a") as f: f.write(f"    ERROR: {error_message}\n\n")
+        raise RuntimeError(error_message)
+
+    with open(log, "a") as f: f.write("\n")
 
 
 
