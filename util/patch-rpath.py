@@ -43,16 +43,19 @@ escaped = lambda a: a.translate(str.maketrans(TRANS_MAP))
 
 
 
-def set_elf_path(rpath, file_name):
+def set_elf_path(rpath, file_name, log="patchelf.log"):
     rpath_escaped = escaped(rpath)
-    print(f" -> Running patch for {rpath}")
+    with open(log, "w") as f:
+        f.write(f" -> Running patch for {rpath}")
 
-    print(f" -  patchelf --remove-rpath {file_name}")
+    with open(log, "w") as f:
+        f.write(f" -  patchelf --remove-rpath {file_name}")
     status = os.system(f"patchelf --remove-rpath {file_name}")
     if status != 0 :
         raise RuntimeError(f"patchelf --remove-rpath {file_name} didn't work")
 
-    print(f" -  patchelf --set-rpath \"{rpath_escaped}\" {file_name}")
+    with open(log, "w") as f:
+        f.write(f" -  patchelf --set-rpath \"{rpath_escaped}\" {file_name}")
     status = os.system(f"patchelf --set-rpath \"{rpath_escaped}\" {file_name}")
     if status != 0 :
         raise RuntimeError(f"patchelf --set-rpath \"{rpath_escaped}\" {file_name}")
@@ -63,12 +66,13 @@ def set_elf_path(rpath, file_name):
 if __name__ == "__main__":
     target_dir = sys.argv[1]
 
-
-    for file_name in glob.glob(os.path.join(target_dir, "*.so")):
-        elf = read_elf(file_name)
-        if elf["has_rpath"]:
-            print(f"Patching {file_name}: RPATH -> RUNPATH")
-            rpath = get_elf_path(RPATH_TOKEN, elf["lines"])
-            set_elf_path(rpath, file_name)
-        else:
-            print(f"Not patching {file_name}: no RPATH")
+    for root, dirs, files in os.walk(target_dir):
+        for cdir in dirs:
+            for file_name in glob.glob(os.path.join(cdir, "*.so")):
+                elf = read_elf(file_name)
+                if elf["has_rpath"]:
+                    print(f"Patching {file_name}: RPATH -> RUNPATH")
+                    rpath = get_elf_path(RPATH_TOKEN, elf["lines"])
+                    set_elf_path(rpath, file_name)
+                else:
+                    print(f"Not patching {file_name}: no RPATH")
